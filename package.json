@@ -1,0 +1,50 @@
+{
+	"name": "to-do-assignment-app",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev": "next dev",
+		"build": "next build",
+		"deploy": "node build.js",
+		"build:docker": "node build.js",
+		"docker:build": "node build.js && docker build -t to-do-assignment-app .",
+		"docker:push": "docker push to-do-assignment-app",
+		"start": "next start",
+		"lint": "biome check",
+		"format": "biome format --write",
+		"bns": "next build && next start",
+		"db:generate": "npx drizzle-kit generate --config drizzle.config.ts",
+		"db:push": "npx drizzle-kit push --config drizzle.config.ts",
+		"db:studio": "npx drizzle-kit studio --config drizzle.config.ts",
+		"db:migrate": "npx drizzle-kit migrate --config drizzle.config.ts",
+		"env:update": "bash scripts/sync-env-to-vercel.sh"
+	},
+	"dependencies": {
+		"@clerk/nextjs": "^6.35.2",
+		"@google/genai": "^1.30.0",
+		"@libsql/client": "^0.15.15",
+		"cloudinary": "^2.8.0",
+		"clsx": "^2.1.1",
+		"dotenv": "^17.2.3",
+		"drizzle-orm": "^0.44.7",
+		"html2canvas": "^1.4.1",
+		"jspdf": "^3.0.4",
+		"next": "^16.0.3",
+		"react": "19.2.0",
+		"react-dom": "19.2.0",
+		"react-icons": "^5.5.0",
+		"tailwind-merge": "^3.4.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.2.0",
+		"@tailwindcss/postcss": "^4",
+		"@types/node": "^20",
+		"@types/react": "^19",
+		"@types/react-dom": "^19",
+		"babel-plugin-react-compiler": "1.0.0",
+		"baseline-browser-mapping": "^2.8.32",
+		"drizzle-kit": "^0.31.7",
+		"tailwindcss": "^4",
+		"typescript": "^5"
+	}
+}

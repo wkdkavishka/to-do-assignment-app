@@ -18,7 +18,15 @@ export interface Authour {
 	};
 }
 
-export const authorData: Authour = {
+export interface SiteDataInterface {
+	authorData: Authour;
+	siteInformation: SiteInformation;
+}
+export interface SiteInformation {
+	name: string;
+}
+
+const authorData: Authour = {
 	about: {
 		name: "W.K.D.Kavishka",
 		description: "Software Engineer",
@@ -35,31 +43,13 @@ export const authorData: Authour = {
 		Email: "w.k.d.kavishka@gmail.com",
 	},
 };
-
-export interface SiteDataInterface {
-	authorData: Authour;
-}
+const siteInformation: SiteInformation = {
+	name: "To Do Assignment",
+};
 
 export const siteData: SiteDataInterface = {
 	authorData: authorData,
+	siteInformation: siteInformation,
 };
 
-
-
-export interface SeoData {
-	siteUrl: string;
-	siteName: string;
-	description: string;
-	keywords: string[];
-	social: {
-		email?: string;
-		phone?: string;
-		whatsapp?: string;
-	};
-	images: {
-		logo: string;
-		ogImage: string;
-		appleIcon: string;
-	};
-}
-
+export const navbarAndFooterDisabledRoutes = [""];

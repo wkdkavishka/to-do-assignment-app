@@ -2,49 +2,17 @@
 "use client";
 
 import { SignOutButton, useUser } from "@clerk/nextjs";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { callApi_createPaper, callApi_getCurrentCreatingPaper } from "@/api";
-import { useGlobalAlert } from "@/components/shared/AlertProvider";
 import { siteData } from "@/data/site-data";
 
 export const NavigationComp = () => {
 	const router = useRouter();
 	const pathname = usePathname();
 	const { isSignedIn, user } = useUser();
-	const { showError } = useGlobalAlert();
 	const [isScrolled, setIsScrolled] = useState(false);
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-	const [isCreatingPaper, setIsCreatingPaper] = useState(false);
-
-	// Helper function to get role-based colors
-	const getRoleColors = () => {
-		const role = user?.publicMetadata?.role as string;
-		if (role === "admin") {
-			return {
-				bg: "bg-red-100",
-				text: "text-red-700",
-				border: "border-red-200",
-				darkBg: "bg-red-700",
-			};
-		}
-		if (role === "teacher") {
-			return {
-				bg: "bg-orange-100",
-				text: "text-orange-700",
-				border: "border-orange-200",
-				darkBg: "bg-orange-700",
-			};
-		}
-		return {
-			bg: "bg-green-100",
-			text: "text-green-700",
-			border: "border-green-200",
-			darkBg: "bg-green-700",
-		};
-	};
-
-	const roleColors = getRoleColors();
 
 	useEffect(() => {
 		const handleScroll = () => {
@@ -61,7 +29,7 @@ export const NavigationComp = () => {
 		setIsSidebarOpen(false);
 	}, [pathname]);
 
-	// 1. Close sidebar on sign out
+	// Close sidebar on sign out
 	useEffect(() => {
 		if (!isSignedIn) {
 			setIsSidebarOpen(false);
@@ -80,43 +48,16 @@ export const NavigationComp = () => {
 		};
 	}, [isSidebarOpen]);
 
-	const handleAddPaperClick = async () => {
-		if (isCreatingPaper) return;
-		setIsCreatingPaper(true);
-		try {
-			// 1. Check if there is already a creating paper
-			const currentPaper = await callApi_getCurrentCreatingPaper();
-
-			if (currentPaper) {
-				router.push(`/teacher/addPaper?paperId=${currentPaper.id}`);
-				setIsSidebarOpen(false);
-				return;
-			}
-
-			// 2. If not, create a new one
-			const newPaper = await callApi_createPaper(
-				`New Paper - ${new Date().toLocaleDateString()}`,
-			);
-			router.push(`/teacher/addPaper?paperId=${newPaper.id}`);
-			setIsSidebarOpen(false);
-		} catch (error) {
-			console.error("Failed to handle add paper:", error);
-			showError("Failed to initialize paper. Please try again.");
-		} finally {
-			setIsCreatingPaper(false);
-		}
-	};
-
 	const showBackground = isScrolled;
 
 	return (
 		<>
 			<nav
-				className={`w-full fixed top-0 z-50 transition-all duration-300 border-b-1 border-green-400 ${
+				className={`w-full fixed top-0 z-50 transition-all duration-300 border-b-1 border-blue-400 ${
 					showBackground
 						? "bg-white/80 backdrop-blur-md"
-						: "bg-white/90 backdrop-blur-md" // while on top
-				}  animate-fadeIn`}
+						: "bg-white/90 backdrop-blur-md"
+				} animate-fadeIn`}
 			>
 				<div className="relative flex h-16 items-center justify-between px-6 sm:px-8 max-w-7xl mx-auto">
 					{/* --- DESKTOP: Left Spacer --- */}
@@ -128,7 +69,7 @@ export const NavigationComp = () => {
 							onClick={() => router.push("/")}
 							className="cursor-pointer text-2xl md:text-3xl font-bold transition-all hover:scale-105 select-none pointer-events-auto text-gradient"
 						>
-							{siteData.ClassDetails.name}
+							{siteData.siteInformation.name}
 						</h1>
 					</div>
 
@@ -143,21 +84,26 @@ export const NavigationComp = () => {
 									className="flex items-center gap-3 focus:outline-none group p-1 rounded-full hover:bg-gray-50 transition-colors"
 								>
 									<div className="text-right transition-opacity group-hover:opacity-80">
-										<p className="text-sm font-semibold text-gray-700">
-											{user?.firstName} {user?.lastName}
-										</p>
-										<p className="text-xs text-gray-500">
-											{(user?.publicMetadata
-												?.role as string) || "Student"}
-										</p>
+										{user.firstName && user.lastName ? (
+											<p className="text-sm font-semibold text-gray-700">
+												{user.firstName} {user.lastName}
+											</p>
+										) : (
+											<p className="text-xs text-amber-600 font-medium">
+												{
+													user.emailAddresses[0]
+														.emailAddress
+												}
+											</p>
+										)}
 									</div>
-									<div
-										className={`w-10 h-10 rounded-full ${roleColors.bg} flex items-center justify-center ${roleColors.text} font-bold text-lg transition-transform group-hover:scale-105 border ${roleColors.border} overflow-hidden`}
-									>
+									<div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg transition-transform group-hover:scale-105 overflow-hidden">
 										{user?.imageUrl ? (
-											<img
+											<Image
 												src={user.imageUrl}
 												alt="Profile"
+												width={40}
+												height={40}
 												className="w-full h-full object-cover"
 											/>
 										) : (
@@ -195,7 +141,7 @@ export const NavigationComp = () => {
 				</div>
 			</nav>
 
-			{/* --- UNIFIED SIDEBAR DRAWER --- */}
+			{/* --- SIDEBAR DRAWER --- */}
 			{isSidebarOpen && (
 				<div className="fixed inset-0 z-[100]">
 					<button
@@ -232,18 +178,18 @@ export const NavigationComp = () => {
 							</button>
 						</div>
 
-						{/* 3. SAFE RENDER: Only show content if user exists */}
 						{user ? (
 							<>
+								{/* User Info */}
 								<div className="p-6 bg-gray-50 shrink-0">
 									<div className="flex items-center gap-4 mb-2">
-										<div
-											className={`w-12 h-12 rounded-full ${roleColors.darkBg} flex items-center justify-center text-white font-bold text-xl border ${roleColors.border} shadow-sm overflow-hidden`}
-										>
+										<div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-xl shadow-sm overflow-hidden">
 											{user.imageUrl ? (
-												<img
+												<Image
 													src={user.imageUrl}
 													alt="Profile"
+													width={48}
+													height={48}
 													className="w-full h-full object-cover"
 												/>
 											) : (
@@ -251,14 +197,16 @@ export const NavigationComp = () => {
 											)}
 										</div>
 										<div>
-											<p className="font-bold text-gray-800 text-lg">
-												{user.firstName} {user.lastName}
-											</p>
-											<span className="inline-block px-2 py-0.5 text-xs font-medium bg-white border border-gray-200 rounded-full text-gray-600 capitalize">
-												{(user.publicMetadata
-													?.role as string) ||
-													"Student"}
-											</span>
+											{user.firstName && user.lastName ? (
+												<p className="font-bold text-gray-800 text-lg">
+													{user.firstName}{" "}
+													{user.lastName}
+												</p>
+											) : (
+												<p className="text-sm text-amber-600 font-medium">
+													update your name
+												</p>
+											)}
 										</div>
 									</div>
 									<p className="text-sm text-gray-500 truncate">
@@ -266,179 +214,49 @@ export const NavigationComp = () => {
 									</p>
 								</div>
 
+								{/* Navigation Links */}
 								<div className="flex-1 overflow-y-auto py-2">
 									<div className="px-4 space-y-1">
-										{user.publicMetadata?.role ===
-											"admin" && (
-											<button
-												type="button"
-												onClick={() => {
-													router.push("/admin");
-													setIsSidebarOpen(false);
-												}}
-												className="w-full flex items-center gap-3 p-4 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-xl transition-all font-medium group"
-											>
-												<span className="text-xl group-hover:scale-110 transition-transform">
-													⚙️
-												</span>
-												Admin Panel
-											</button>
-										)}
+										{/* Go to Todos */}
+										<button
+											type="button"
+											onClick={() => {
+												router.push("/todos");
+												setIsSidebarOpen(false);
+											}}
+											className="w-full flex items-center gap-3 p-4 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-xl transition-all font-medium group"
+										>
+											<span className="text-xl group-hover:scale-110 transition-transform">
+												📝
+											</span>
+											Go to Todos
+										</button>
 
-										{user.publicMetadata?.role ===
-											"teacher" && (
-											<>
-												<button
-													type="button"
-													onClick={() => {
-														router.push("/teacher");
-														setIsSidebarOpen(false);
-													}}
-													className="w-full flex items-center gap-3 p-4 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-xl transition-all font-medium group"
-												>
-													<span className="text-xl group-hover:scale-110 transition-transform">
-														👨‍🏫
-													</span>
-													Teacher Dashboard
-												</button>
-												<button
-													type="button"
-													onClick={
-														handleAddPaperClick
-													}
-													disabled={isCreatingPaper}
-													className="w-full flex items-center gap-3 p-4 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-xl transition-all font-medium group disabled:opacity-50 disabled:cursor-not-allowed"
-												>
-													<span className="text-xl group-hover:scale-110 transition-transform">
-														{isCreatingPaper
-															? "⏳"
-															: "📝"}
-													</span>
-													{isCreatingPaper
-														? "Initializing..."
-														: "Add Paper"}
-												</button>
-												<button
-													type="button"
-													onClick={() => {
-														router.push(
-															"/teacher/managePaperGroups",
-														);
-														setIsSidebarOpen(false);
-													}}
-													className="w-full flex items-center gap-3 p-4 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-xl transition-all font-medium group"
-												>
-													<span className="text-xl group-hover:scale-110 transition-transform">
-														📑
-													</span>
-													Manage Paper Groups
-												</button>
-												<button
-													type="button"
-													onClick={() => {
-														router.push(
-															"/teacher/submissions",
-														);
-														setIsSidebarOpen(false);
-													}}
-													className="w-full flex items-center gap-3 p-4 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-xl transition-all font-medium group"
-												>
-													<span className="text-xl group-hover:scale-110 transition-transform">
-														📊
-													</span>
-													Exam Submissions
-												</button>
-												<button
-													type="button"
-													onClick={() => {
-														router.push(
-															"/teacher/profile",
-														);
-														setIsSidebarOpen(false);
-													}}
-													className="w-full flex items-center gap-3 p-4 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-xl transition-all font-medium group"
-												>
-													<span className="text-xl group-hover:scale-110 transition-transform">
-														👤
-													</span>
-													Profile
-												</button>
-											</>
-										)}
-
-										{/* Student Links (or common links) */}
-										{(!user.publicMetadata?.role ||
-											user.publicMetadata?.role ===
-												"student") && (
-											<>
-												<button
-													type="button"
-													onClick={() => {
-														router.push("/student");
-														setIsSidebarOpen(false);
-													}}
-													className="w-full flex items-center gap-3 p-4 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-xl transition-all font-medium group"
-												>
-													<span className="text-xl group-hover:scale-110 transition-transform">
-														📚
-													</span>
-													Student Dashboard
-												</button>
-												<button
-													type="button"
-													onClick={() => {
-														router.push(
-															"/student/paper/setup",
-														);
-														setIsSidebarOpen(false);
-													}}
-													className="w-full flex items-center gap-3 p-4 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-xl transition-all font-medium group"
-												>
-													<span className="text-xl group-hover:scale-110 transition-transform">
-														📝
-													</span>
-													Active Paper
-												</button>
-												<button
-													type="button"
-													onClick={() => {
-														router.push(
-															"/student/paperGroups",
-														);
-														setIsSidebarOpen(false);
-													}}
-													className="w-full flex items-center gap-3 p-4 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-xl transition-all font-medium group"
-												>
-													<span className="text-xl group-hover:scale-110 transition-transform">
-														📚
-													</span>
-													My Paper Groups
-												</button>
-												<button
-													type="button"
-													onClick={() => {
-														router.push("/student");
-														setIsSidebarOpen(false);
-													}}
-													className="w-full flex items-center gap-3 p-4 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-xl transition-all font-medium group"
-												>
-													<span className="text-xl group-hover:scale-110 transition-transform">
-														🏆
-													</span>
-													Results
-												</button>
-											</>
-										)}
+										{/* Profile */}
+										<button
+											type="button"
+											onClick={() => {
+												router.push("/user");
+												setIsSidebarOpen(false);
+											}}
+											className="w-full flex items-center gap-3 p-4 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-xl transition-all font-medium group"
+										>
+											<span className="text-xl group-hover:scale-110 transition-transform">
+												👤
+											</span>
+											Profile
+										</button>
 									</div>
 								</div>
 
+								{/* Sign Out */}
 								<div className="p-4 border-t border-gray-100 shrink-0">
 									<SignOutButton>
 										<button
 											type="button"
 											onClick={() =>
 												setIsSidebarOpen(false)
-											} // 4. Close immediately on click
+											}
 											className="w-full flex items-center justify-center gap-2 p-4 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-colors font-semibold"
 										>
 											🚪 Sign Out
@@ -447,7 +265,6 @@ export const NavigationComp = () => {
 								</div>
 							</>
 						) : (
-							// Empty/Loading state if user data is cleared while menu is open
 							<div className="flex-1 flex items-center justify-center text-gray-400 text-sm">
 								Signing out...
 							</div>

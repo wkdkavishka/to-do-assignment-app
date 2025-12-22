@@ -13,9 +13,5 @@ export const ConditionalNavbar = () => {
 		return null;
 	}
 
-	return (
-		<>
-			<NavigationComp />
-		</>
-	);
+	return <NavigationComp />;
 };

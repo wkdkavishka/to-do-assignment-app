@@ -32,7 +32,7 @@ export default function AddTodoForm({ onAdd }: AddTodoFormProps) {
 	return (
 		<div className="bg-white rounded-xl p-6 shadow-sm border-2 border-gray-200">
 			<h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-				<span className="text-2xl">➕</span>
+				<span className="text-lg">➕</span>
 				Add New Todo
 			</h2>
 
@@ -86,7 +86,7 @@ export default function AddTodoForm({ onAdd }: AddTodoFormProps) {
 				<button
 					type="submit"
 					disabled={!title.trim() || isSubmitting}
-					className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+					className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 rounded-lg font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
 				>
 					{isSubmitting ? (
 						<span className="flex items-center justify-center gap-2">

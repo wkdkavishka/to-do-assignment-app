@@ -203,7 +203,7 @@ export default function TodosPage() {
 	}
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
+		<div className="min-h-screen mt-4 bg-slate-200 p-6">
 			<div className="max-w-5xl mx-auto">
 				{/* Header */}
 				<div className="text-center mb-8">
@@ -214,7 +214,7 @@ export default function TodosPage() {
 						My Todos
 					</h1>
 					<p className="text-gray-600 animate-fadeIn">
-						Stay organized and productive
+						Manage your To Do's Heare
 					</p>
 				</div>
 
@@ -254,7 +254,7 @@ export default function TodosPage() {
 							),
 						)}
 					</div>
-
+					cc
 					{/* Search Bar */}
 					<div className="relative">
 						<FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -360,7 +360,7 @@ export default function TodosPage() {
 				)}
 
 				{/* Navigation Buttons */}
-				<div className="flex gap-4 mt-8 animate-fadeIn">
+				{/* <div className="flex gap-4 mt-8 animate-fadeIn">
 					<button
 						type="button"
 						onClick={() => router.push("/")}
@@ -375,7 +375,7 @@ export default function TodosPage() {
 					>
 						👤 Profile
 					</button>
-				</div>
+				</div> */}
 			</div>
 
 			{/* Alert Modal */}

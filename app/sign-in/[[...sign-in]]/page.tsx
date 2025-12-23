@@ -75,11 +75,11 @@ export default function SignInPage() {
 					className="flex flex-col gap-6 rounded-xl border border-gray-200 bg-white p-8 shadow-sm animate-fadeIn"
 				>
 					<h1 className="text-3xl font-bold text-center text-gradient tracking-wide">
-						Student Login
+						User Login
 					</h1>
 
 					<div className="mb-2 text-center text-gray-600">
-						Welcome back to your learning portal!
+						Welcome back to your To-Do List!
 					</div>
 
 					<input

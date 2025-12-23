@@ -85,7 +85,7 @@ Create a `.env` file in the root directory:
 NODE_ENV=development
 
 # Next
-NEXT_PUBLIC_API_URL=http://localhost:3000
+NEXT_PUBLIC_API_URL=http://localhost:3001
 
 # Clerk
 # DEV - KEYS

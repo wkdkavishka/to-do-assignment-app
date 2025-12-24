@@ -70,25 +70,14 @@ export default function Home() {
 								</SignOutButton>
 							</>
 						) : (
-							<>
-								<button
-									type="button"
-									onClick={() => router.push("/sign-in")}
-									className="btn-primary w-full rounded-xl py-3 font-semibold text-white transition hover:scale-105"
-								>
-									<span className="text-xl mr-2">🔐</span>
-									Sign In
-								</button>
-
-								<button
-									type="button"
-									onClick={() => router.push("/sign-up")}
-									className="w-full bg-white text-gray-700 py-3 rounded-xl font-semibold border-2 border-gray-200 hover:border-emerald-300 hover:bg-gray-50 transition"
-								>
-									<span className="text-xl mr-2">✨</span>
-									Sign Up
-								</button>
-							</>
+							<button
+								type="button"
+								onClick={() => router.push("/sign-in")}
+								className="btn-primary w-full rounded-xl py-3 font-semibold text-white transition hover:scale-105"
+							>
+								<span className="text-xl mr-2">🔐</span>
+								Sign In
+							</button>
 						)}
 					</div>
 

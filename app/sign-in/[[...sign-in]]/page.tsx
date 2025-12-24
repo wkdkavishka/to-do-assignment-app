@@ -138,6 +138,18 @@ export default function SignInPage() {
 							Forgot Password?
 						</a>
 					</div>
+
+					<div className="text-center text-sm">
+						<span className="text-gray-600">
+							Don't have an account?{" "}
+						</span>
+						<a
+							href="/sign-up"
+							className="font-medium text-emerald-600 hover:text-emerald-700 transition"
+						>
+							Sign Up
+						</a>
+					</div>
 				</form>
 			</div>
 		</div>

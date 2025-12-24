@@ -15,7 +15,6 @@ import AlertModal from "@/components/shared/alertModal";
 import LoadingAnimation from "@/components/shared/loadingAnimationComp";
 import AddTodoForm from "@/components/todos/AddTodoForm";
 import TodoItem, { type Todo } from "@/components/todos/TodoItem";
-import { useUserRegistration } from "@/hooks/useUserRegistration";
 
 type FilterType = "all" | "active" | "completed";
 
@@ -29,11 +28,6 @@ interface AlertState {
 export default function TodosPage() {
 	const router = useRouter();
 	const { isLoaded, isSignedIn } = useUser();
-	const {
-		isReady,
-		isRegistering,
-		error: registrationError,
-	} = useUserRegistration();
 
 	const [todos, setTodos] = useState<Todo[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -92,12 +86,12 @@ export default function TodosPage() {
 		}
 	}, [currentPage, searchQuery, filter]);
 
-	// Fetch when filters change - but only if user is registered
+	// Fetch when filters change
 	useEffect(() => {
-		if (isReady) {
+		if (isLoaded && isSignedIn) {
 			fetchTodos();
 		}
-	}, [isReady, fetchTodos]);
+	}, [isLoaded, isSignedIn, fetchTodos]);
 
 	const handleAddTodo = async (title: string, description: string) => {
 		try {
@@ -162,39 +156,8 @@ export default function TodosPage() {
 		}
 	};
 
-	// Show loading while checking auth or registering user
-	if (!isLoaded || !isSignedIn || isRegistering) {
-		return (
-			<div className="flex min-h-screen items-center justify-center">
-				<LoadingAnimation size="md" color="blue" />
-			</div>
-		);
-	}
-
-	// Show error if registration failed
-	if (registrationError) {
-		return (
-			<div className="flex min-h-screen items-center justify-center px-6">
-				<div className="text-center bg-white p-8 rounded-xl shadow-lg max-w-md">
-					<div className="text-6xl mb-4">⚠️</div>
-					<h2 className="text-2xl font-bold text-gray-900 mb-2">
-						Registration Failed
-					</h2>
-					<p className="text-red-600 mb-6">{registrationError}</p>
-					<button
-						type="button"
-						onClick={() => router.push("/sign-in")}
-						className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-					>
-						Back to Sign In
-					</button>
-				</div>
-			</div>
-		);
-	}
-
-	// Only show todos page when user is fully registered
-	if (!isReady) {
+	// Show loading while checking auth
+	if (!isLoaded || !isSignedIn) {
 		return (
 			<div className="flex min-h-screen items-center justify-center">
 				<LoadingAnimation size="md" color="blue" />
